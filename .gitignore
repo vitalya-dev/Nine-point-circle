@@ -9,3 +9,7 @@ yarn-error.log*
 # Ignore Operating System files
 .DS_Store
 Thumbs.db
+
+
+/media
+/__pycache__
