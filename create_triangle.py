@@ -29,11 +29,11 @@ class CircumcenterScene(Scene):
 		# 2. Get all three midpoints and mark them
 		m1 = (v1 + v2) / 2
 		m2 = (v2 + v3) / 2
-		m3 = (v3 + v1) / 2  # NEW: Calculate third midpoint
+		m3 = (v3 + v1) / 2
 		midpoints = VGroup(
 			Dot(m1, color=YELLOW),
 			Dot(m2, color=YELLOW),
-			Dot(m3, color=YELLOW) # NEW: Add third dot to the group
+			Dot(m3, color=YELLOW)
 		)
 		
 		self.play(Create(midpoints))
@@ -48,32 +48,37 @@ class CircumcenterScene(Scene):
 		perp2_vec = rotate_vector(side2_vec, PI / 2)
 		perp_line2 = Line(m2 - perp2_vec * 2, m2 + perp2_vec * 2, color=RED)
 
-		# NEW: Create the third perpendicular line
 		side3_vec = v1 - v3
 		perp3_vec = rotate_vector(side3_vec, PI / 2)
 		perp_line3 = Line(m3 - perp3_vec * 2, m3 + perp3_vec * 2, color=RED)
 
-		# Animate all three lines at once
 		self.play(
 			Create(perp_line1),
 			Create(perp_line2),
-			Create(perp_line3) # NEW: Add third line to the animation
+			Create(perp_line3)
 		)
 		self.wait(0.5)
 
-		# 4. Calculate the circumcenter (still only need two lines for this)
+		# 4. Calculate the circumcenter
 		circumcenter_point = self.get_line_intersection(
 			perp_line1.get_start(), perp_line1.get_end(),
 			perp_line2.get_start(), perp_line2.get_end()
 		)
-		circumcenter_dot = Dot(circumcenter_point, color=ORANGE, radius=0.1)
 		
-		self.play(FadeIn(circumcenter_dot, scale=0.5))
-		self.wait(0.5)
+		# 5. Check if an intersection was found before drawing
+		if circumcenter_point is not None:
+			# All code that uses the center point now goes inside this block
+			circumcenter_dot = Dot(circumcenter_point, color=ORANGE, radius=0.1)
+			
+			self.play(FadeIn(circumcenter_dot, scale=0.5))
+			self.wait(0.5)
 
-		# 5. Draw the circumcircle to verify
-		radius = np.linalg.norm(circumcenter_point - v1)
-		circumcircle = Circle(radius=radius, arc_center=circumcenter_point, color=ORANGE)
+			radius = float(np.linalg.norm(circumcenter_point - v1))
+			circumcircle = Circle(radius=radius, arc_center=circumcenter_point, color=ORANGE)
 
-		self.play(Create(circumcircle))
-		self.wait(2)
+			self.play(Create(circumcircle))
+			self.wait(2)
+		else:
+			# Optional: Show a message if no center is found
+			self.play(Text("Lines are parallel, no circumcenter.").scale(0.5))
+			self.wait(2)
