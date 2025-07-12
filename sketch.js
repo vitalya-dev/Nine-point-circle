@@ -69,8 +69,15 @@ function draw() {
 	}
 	
 	// Phase 3: The triangle is complete
+// Phase 3: The triangle is complete
 	if (phase === 3) {
+		// Add this line to disable the fill for the final shape
 		noFill();
+
+		// Set the style for the triangle's outline
+		stroke(97, 218, 251); // Light blue
+		strokeWeight(3);
+
 		// Draw the final, complete triangle shape
 		beginShape();
 		vertex(vertex1.x, vertex1.y);
@@ -78,6 +85,20 @@ function draw() {
 		vertex(vertex3.x, vertex3.y);
 		endShape(CLOSE);
 
+		// Calculate the midpoint for each side
+		let mid1 = p5.Vector.lerp(vertex1, vertex2, 0.5);
+		let mid2 = p5.Vector.lerp(vertex2, vertex3, 0.5);
+		let mid3 = p5.Vector.lerp(vertex3, vertex1, 0.5);
+
+		// Set a different style for the midpoints
+		stroke(255, 70, 70); // A nice red color
+		strokeWeight(7);     // Make them slightly smaller than the main vertices
+
+		// Draw the midpoint on each side
+		point(mid1.x, mid1.y);
+		point(mid2.x, mid2.y);
+		point(mid3.x, mid3.y);
+		
 		// Optional: stop the animation loop once drawing is complete
 		// noLoop(); 
 	}
