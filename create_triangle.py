@@ -2,8 +2,8 @@ from manim import *
 
 class CombinedCircleSceneNoFade(Scene):
 	"""
-	A Manim scene that constructs the circumcircle and then the
-	incircle of a triangle, leaving all construction elements visible.
+	A Manim scene that constructs the circumcircle, incircle, and centroid
+	of a triangle, leaving all construction elements visible.
 	"""
 	def get_line_intersection(self, line1_start, line1_end, line2_start, line2_end):
 		"""
@@ -70,7 +70,7 @@ class CombinedCircleSceneNoFade(Scene):
 			circumcircle = Circle(radius=radius, arc_center=circumcenter_point, color=ORANGE)
 
 			self.play(Create(circumcircle))
-			self.wait(2) # Pause before starting the next part
+			self.wait(2)
 
 		# --- Part 2: Incenter and Incircle (No FadeOut) ---
 
@@ -102,4 +102,26 @@ class CombinedCircleSceneNoFade(Scene):
 			incircle = Circle(radius=radius, arc_center=incenter_point, color=PURPLE)
 
 			self.play(Create(incircle))
+			self.wait(2)
+			
+		# --- Part 3: Centroid and Medians ---
+
+		# 9. Create the three medians
+		median1 = Line(v1, m2, color=BLUE)
+		median2 = Line(v2, m3, color=BLUE)
+		median3 = Line(v3, m1, color=BLUE)
+		medians = VGroup(median1, median2, median3)
+
+		self.play(Create(medians), run_time=2)
+		self.wait(1)
+
+		# 10. Calculate the centroid
+		centroid_point = self.get_line_intersection(
+			median1.get_start(), median1.get_end(),
+			median2.get_start(), median2.get_end()
+		)
+
+		if centroid_point is not None:
+			centroid_dot = Dot(centroid_point, color=PINK, radius=0.1)
+			self.play(FadeIn(centroid_dot, scale=0.5))
 			self.wait(3)
