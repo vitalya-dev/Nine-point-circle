@@ -4,7 +4,7 @@ import numpy as np
 class CombinedCircleSceneWithFade(Scene):
 	"""
 	A Manim scene that constructs the circumcircle, incircle, and centroid
-	of a triangle, fading out construction elements after they are used.
+	of a triangle, keeping the special points visible after construction.
 	"""
 	def get_line_intersection(self, line1_start, line1_end, line2_start, line2_end):
 		"""
@@ -76,8 +76,12 @@ class CombinedCircleSceneWithFade(Scene):
 			self.play(Create(circumcircle))
 			self.wait(2)
 			
-			# MODIFICATION: Fade out the construction lines for the circumcenter
-			self.play(FadeOut(perp_lines), FadeOut(midpoints))
+			# MODIFICATION: Fade out construction elements, but KEEP the circumcenter dot.
+			self.play(
+				FadeOut(perp_lines), 
+				FadeOut(midpoints), 
+				FadeOut(circumcircle)
+			)
 			self.wait(1)
 
 
@@ -113,8 +117,11 @@ class CombinedCircleSceneWithFade(Scene):
 			self.play(Create(incircle))
 			self.wait(2)
 			
-			# MODIFICATION: Fade out the angle bisectors
-			self.play(FadeOut(angle_bisectors))
+			# MODIFICATION: Fade out construction elements, but KEEP the incenter dot.
+			self.play(
+				FadeOut(angle_bisectors), 
+				FadeOut(incircle)
+			)
 			self.wait(1)
 
 			
@@ -143,6 +150,6 @@ class CombinedCircleSceneWithFade(Scene):
 			self.play(FadeIn(centroid_dot, scale=0.5))
 			self.wait(1)
 			
-			# MODIFICATION: Fade out the medians
+			# Fade out the medians, keeping the centroid dot
 			self.play(FadeOut(medians))
 			self.wait(3)
