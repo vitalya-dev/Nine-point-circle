@@ -1,9 +1,10 @@
 from manim import *
+import numpy as np
 
-class CombinedCircleSceneNoFade(Scene):
+class CombinedCircleSceneWithFade(Scene):
 	"""
 	A Manim scene that constructs the circumcircle, incircle, and centroid
-	of a triangle, leaving all construction elements visible.
+	of a triangle, fading out construction elements after they are used.
 	"""
 	def get_line_intersection(self, line1_start, line1_end, line2_start, line2_end):
 		"""
@@ -22,9 +23,12 @@ class CombinedCircleSceneNoFade(Scene):
 		b = (p3 - p1)[:2]
 		
 		try:
+			# Solve for the intersection parameter t
 			t = np.linalg.solve(A, b)[0]
+			# Return the intersection point
 			return p1 + t * v1
 		except np.linalg.LinAlgError:
+			# Lines are parallel
 			return None
 
 	def construct(self):
@@ -71,8 +75,13 @@ class CombinedCircleSceneNoFade(Scene):
 
 			self.play(Create(circumcircle))
 			self.wait(2)
+			
+			# MODIFICATION: Fade out the construction lines for the circumcenter
+			self.play(FadeOut(perp_lines), FadeOut(midpoints))
+			self.wait(1)
 
-		# --- Part 2: Incenter and Incircle (No FadeOut) ---
+
+		# --- Part 2: Incenter and Incircle ---
 
 		# 6. Create all three angle bisectors
 		bisector1 = Line(v1, v1 + normalize(normalize(v2 - v1) + normalize(v3 - v1)) * 15, color=GREEN)
@@ -104,12 +113,20 @@ class CombinedCircleSceneNoFade(Scene):
 			self.play(Create(incircle))
 			self.wait(2)
 			
+			# MODIFICATION: Fade out the angle bisectors
+			self.play(FadeOut(angle_bisectors))
+			self.wait(1)
+
+			
 		# --- Part 3: Centroid and Medians ---
 
+		# The midpoints are needed again, so we'll recreate them briefly
+		m1, m2, m3 = (v1 + v2) / 2, (v2 + v3) / 2, (v3 + v1) / 2
+
 		# 9. Create the three medians
-		median1 = Line(v1, m2, color=BLUE)
-		median2 = Line(v2, m3, color=BLUE)
-		median3 = Line(v3, m1, color=BLUE)
+		median1 = Line(v1, m2, color=TEAL)
+		median2 = Line(v2, m3, color=TEAL)
+		median3 = Line(v3, m1, color=TEAL)
 		medians = VGroup(median1, median2, median3)
 
 		self.play(Create(medians), run_time=2)
@@ -124,4 +141,8 @@ class CombinedCircleSceneNoFade(Scene):
 		if centroid_point is not None:
 			centroid_dot = Dot(centroid_point, color=PINK, radius=0.1)
 			self.play(FadeIn(centroid_dot, scale=0.5))
+			self.wait(1)
+			
+			# MODIFICATION: Fade out the medians
+			self.play(FadeOut(medians))
 			self.wait(3)
